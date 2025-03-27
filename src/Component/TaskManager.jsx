@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { getTask, deleteTask, updateTask, postTask } from "../API/api";
+// import { getTask, deleteTask, updateTask, postTask } from "../API/api";
+import * as api from '../API/api'
 import axios from 'axios';
+// import API from '../API/api'
 const TaskManager = () => {
     const [tasks, setTasks] = useState([]);
     const [error, setError] = useState(null);
@@ -13,7 +15,9 @@ const TaskManager = () => {
         const fetchTask = async () => {
             try{
             // const response  = await getTask();
-            const response  = await axios.get("http://127.0.0.1:8000/api/tasks");
+            // debugger
+            const response  = await api.getTask();
+            console.log("Hello")
             console.log(response);
             if(Array.isArray(response.data)){
 
@@ -46,7 +50,7 @@ const handleAddTask = async() => {
         status:taskStatus,
     };
     try{
-        const response = await postTask(newTask);
+      const response  = await api.postTask(newTask);
         console.log("Task added Succesfully");
         // setTasks([...tasks, response.data]);
         setTasks(prevTasks => [...prevTasks, response.data]);
