@@ -43,21 +43,28 @@ const TaskManager = () => {
   };
 
 //adding the new task
-const handleAddTask = async() => {
+const handleAddTask = async(e) => {
+  e.preventDefault();
     const newTask = {
         title : taskTitle,
         description: taskDescription,
         status:taskStatus,
     };
     try{
+      // debugger
       const response  = await api.postTask(newTask);
         console.log("Task added Succesfully");
         // setTasks([...tasks, response.data]);
-        setTasks(prevTasks => [...prevTasks, response.data]);
+        console.log("Add task:",response.data);
+        if(response.data){
+
+          setTasks(prevTasks => [...prevTasks, response.data]);
+        }
 
         setTaskTitle('');
         setTaskDescription('');
         setTaskStatus('Pending');
+        setIsOpen(false);
 
     } catch(err){
         setError("Error Adding the Task");
