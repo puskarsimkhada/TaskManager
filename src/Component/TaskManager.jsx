@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
-// import { getTask, deleteTask, updateTask, postTask } from "../API/api";
 import * as api from '../API/api'
-import axios from 'axios';
-// import API from '../API/api'
 const TaskManager = () => {
     const [tasks, setTasks] = useState([]);
     const [error, setError] = useState(null);
@@ -10,15 +7,11 @@ const TaskManager = () => {
     const [taskTitle, setTaskTitle] = useState("");
     const [taskStatus, setTaskStatus] = useState("Pending");
     const [taskDescription, setTaskDescription] = useState("");
-
+    const [editTaskId, setEditTaskId] = useState(null);
     useEffect(() => {
         const fetchTask = async () => {
             try{
-            // const response  = await getTask();
-            // debugger
             const response  = await api.getTask();
-            console.log("Hello")
-            console.log(response);
             if(Array.isArray(response.data)){
 
                 setTasks(response.data);
@@ -51,31 +44,71 @@ const handleAddTask = async(e) => {
         status:taskStatus,
     };
     try{
-      // debugger
-      const response  = await api.postTask(newTask);
-        console.log("Task added Succesfully");
-        // setTasks([...tasks, response.data]);
-        console.log("Add task:",response.data);
-        if(response.data){
-
-          setTasks(prevTasks => [...prevTasks, response.data]);
-        }
-
+      if(editTaskId){
+        const response  = await api.updateTask(editTaskId,newTask);
+        setTasks((prevTask) => prevTask.map((task) => task.id === editTaskId ? {...task, ...newTask} : task))
+        console.log("Task Edit Successfully");
+      }
+      else{
+        const response  = await api.postTask(newTask);
+          if(response.data){
+            setTasks(prevTasks => [...prevTasks, response.data]);
+          }
+      }
         setTaskTitle('');
         setTaskDescription('');
         setTaskStatus('Pending');
+        setEditTaskId(null);
         setIsOpen(false);
-
     } catch(err){
         setError("Error Adding the Task");
         console.log("Error Adding the Task");
     }
-
   };
 
-  const handleDeleteTask = (id) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+  //Updating the task
+  const handleUpdateTask = async(taskId, updateTitle, updateDescription, updateStatus) => {
+    // e.preventDefault();
+    setEditTaskId(taskId);
+    setTaskTitle(updateTitle);
+    setTaskDescription(updateDescription);
+    setTaskStatus(updateStatus);
+    setIsOpen(true);
+    // const editTask = {
+    //   title: updateTitle,
+    //   description: updateDescription,
+    //   status: updateStatus,
+    // }
+    // try {
+    //   const response = await api.updateTask(taskId, editTask);
+
+    //   setTasks((prevTask) => prevTask.map((task) => task.id === taskId ? {...task, ...editTask} : task))
+
+    //   console.log("Updated data:",response.data);
+    // } catch (error) {
+    //   console.log("Failed to update the task");
+    //   setError("Failed to update the task");
+    // }
+
+
+  }
+
+
+
+  //Deleting the task
+  const handleDeleteTask = async (id) => {
+    try{
+      await api.deleteTask(id);
+      setTasks(tasks.filter((task) => task.id !== id));
+      console.log("Task deleted successfully")
+    }catch(err){
+      console.log("Failed to delete the task");
+      setError("Error deleteing the task");
+    }
   };
+
+  
+  //handling cross button
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -97,8 +130,13 @@ const handleAddTask = async(e) => {
 
         <div className="flex justify-end mb-6">
           <button
-            onClick={() => setIsOpen(true)}
-            className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
+            onClick={() => {
+              setTaskTitle('');
+              setTaskDescription('');
+              setTaskStatus('Pending');
+              setEditTaskId(null);
+              setIsOpen(true)}}
+            className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition"
           >
             + Add Task
           </button>
@@ -129,8 +167,8 @@ const handleAddTask = async(e) => {
                   </select>
 
                   {/* Edit and Delete */}
-                  {task.status !== "Completed" && (
-                    <button className="text-blue-500 hover:underline">Edit</button>
+                  {task.status !== "Completed" &&(
+                    <button onClick={() => handleUpdateTask(task.id, task.title, task.description, task.status)} className="text-blue-500 hover:underline">Edit</button>
                   )}
                   <button
                     onClick={() => handleDeleteTask(task.id)}
@@ -153,7 +191,7 @@ const handleAddTask = async(e) => {
               &times;
             </button>
 
-            <h2 className="text-2xl font-bold text-center mb-4">Add New Task</h2>
+            <h2 className="text-2xl font-bold text-center mb-4">{editTaskId ? <h2>Update Task</h2> : <h2>Add New Task</h2>}</h2>
             <form onSubmit={handleAddTask} className="space-y-4">
               <div>
                 <label className="block font-medium text-gray-700">Task Title</label>
@@ -192,7 +230,7 @@ const handleAddTask = async(e) => {
                 type="submit"
                 className="w-full px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition"
               >
-                Add Task
+                {editTaskId ?  <p>Update Task </p> : <p> Add Task</p>}
               </button>
             </form>
           </div>

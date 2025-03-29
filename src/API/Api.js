@@ -5,5 +5,5 @@ export let API_URL = "http://127.0.0.1:8000";
 
 export const getTask = () => axios.get(`${API_URL}/api/tasks`);
 export const postTask = (tasks) => axios.post(`${API_URL}/api/tasks`,tasks);
-export const updateTask = (id,task) => axios.put(`${API_URL}/api/tasks/${id}`,task);
+export const updateTask = (id,updatedTask) => axios.put(`${API_URL}/api/tasks/${id}`,updatedTask);
 export const deleteTask = (id) => axios.delete(`${API_URL}/api/tasks/${id}`);
