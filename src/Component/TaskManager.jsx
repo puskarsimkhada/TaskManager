@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import * as api from '../API/api'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+
 const TaskManager = () => {
     const [tasks, setTasks] = useState([]);
     const [error, setError] = useState(null);
@@ -114,7 +117,7 @@ const handleAddTask = async(e) => {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10 px-4">
       <div className="w-full max-w-screen-xl bg-white p-6 rounded-lg shadow-lg">
-        <h2 className="text-4xl font-semibold text-center text-gray-800 mb-6">Plan Your Day Tasks</h2>
+        <h2 className="text-2xl sm:text-4xl font-semibold text-center text-gray-800 mb-6">Plan Your Day Tasks</h2>
 
         <div className="flex justify-end mb-6">
           <button
@@ -124,7 +127,7 @@ const handleAddTask = async(e) => {
               setTaskStatus('Pending');
               setEditTaskId(null);
               setIsOpen(true)}}
-            className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition"
+            className="bg-green-600 text-white px-3  sm:px-6 py-2 rounded-md hover:bg-green-700 transition"
           >
             + Add Task
           </button>
@@ -136,15 +139,15 @@ const handleAddTask = async(e) => {
               key={index}
               className={`relative p-4 rounded-lg shadow-md hover:shadow-xl transition ${getStatusColor(task.status)}`}
             >
-              <div className="flex justify-between items-start">
+              <div className="flex justify-between items-start mt-5">
                 <div className="flex flex-col">
-                  <h3 className="text-2xl font-semibold text-gray-800 cursor-pointer">{task.title}</h3>
+                  <h3 className="text-xl sm:text-2xl font-semibold text-gray-800 cursor-pointer">{task.title}</h3>
                   <p className="text-gray-600 mt-2">{task.description}</p>
                 </div>
 
-                <div className="absolute top-4 right-4 flex items-center space-x-4">
+                <div className="absolute top-3 right-3 flex items-center space-x-4">
                   {/* Dynamic Status with Button */}
-                  <select
+                  {/* <select
                     value={task.status}
                     onChange={(e) => handleStatusChange(task.id, e.target.value)}
                     className="px-3 py-1 text-sm font-semibold rounded-lg border"
@@ -152,17 +155,17 @@ const handleAddTask = async(e) => {
                     <option value="Pending">Pending</option>
                     <option value="In Progress">In Progress</option>
                     <option value="Completed">Completed</option>
-                  </select>
-
+                  </select> */}
+                  <p>{task.status}</p>
                   {/* Edit and Delete */}
                   {task.status !== "Completed" &&(
-                    <button onClick={() => handleUpdateTask(task.id, task.title, task.description, task.status)} className="text-blue-500 hover:underline">Edit</button>
+                    <button onClick={() => handleUpdateTask(task.id, task.title, task.description, task.status)} className="text-blue-500 hover:underline"> <FontAwesomeIcon icon={faEdit} /></button>
                   )}
                   <button
                     onClick={() => handleDeleteTask(task.id)}
                     className="text-red-500 hover:underline"
                   >
-                    Delete
+                    <FontAwesomeIcon icon={faTrash} />
                   </button>
                 </div>
               </div>
