@@ -27,12 +27,23 @@ const TaskManager = () => {
         fetchTask();
     },[]);
 
-  const handleStatusChange = (id, newStatus) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, status: newStatus } : task
-      )
-    );
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      const response = await api.updateTask(id, {status: newStatus});
+      // setTaskStatus(newStatus);
+      if(response.data){
+        setTasks(
+          tasks.map((task) =>
+            task.id === id ? { ...task, status: newStatus } : task
+        )
+      );
+      }
+    console.log("Status Checking Id: ", id);
+    console.log("Status Checking: ", newStatus);
+      
+    } catch (error) {
+        setError("Failed to change the status")
+    }
   };
 
 //adding the new task
@@ -68,32 +79,12 @@ const handleAddTask = async(e) => {
 
   //Updating the task
   const handleUpdateTask = async(taskId, updateTitle, updateDescription, updateStatus) => {
-    // e.preventDefault();
     setEditTaskId(taskId);
     setTaskTitle(updateTitle);
     setTaskDescription(updateDescription);
     setTaskStatus(updateStatus);
     setIsOpen(true);
-    // const editTask = {
-    //   title: updateTitle,
-    //   description: updateDescription,
-    //   status: updateStatus,
-    // }
-    // try {
-    //   const response = await api.updateTask(taskId, editTask);
-
-    //   setTasks((prevTask) => prevTask.map((task) => task.id === taskId ? {...task, ...editTask} : task))
-
-    //   console.log("Updated data:",response.data);
-    // } catch (error) {
-    //   console.log("Failed to update the task");
-    //   setError("Failed to update the task");
-    // }
-
-
   }
-
-
 
   //Deleting the task
   const handleDeleteTask = async (id) => {
@@ -106,9 +97,6 @@ const handleAddTask = async(e) => {
       setError("Error deleteing the task");
     }
   };
-
-  
-  //handling cross button
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -126,7 +114,7 @@ const handleAddTask = async(e) => {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10 px-4">
       <div className="w-full max-w-screen-xl bg-white p-6 rounded-lg shadow-lg">
-        <h2 className="text-4xl font-semibold text-center text-gray-800 mb-6">Task Manager</h2>
+        <h2 className="text-4xl font-semibold text-center text-gray-800 mb-6">Plan Your Day Tasks</h2>
 
         <div className="flex justify-end mb-6">
           <button
