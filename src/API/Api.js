@@ -7,3 +7,8 @@ export const getTask = () => axios.get(`${API_URL}/api/tasks`);
 export const postTask = (tasks) => axios.post(`${API_URL}/api/tasks`,tasks);
 export const updateTask = (id,updatedTask) => axios.put(`${API_URL}/api/tasks/${id}`,updatedTask);
 export const deleteTask = (id) => axios.delete(`${API_URL}/api/tasks/${id}`);
+
+//for login and register
+
+export const getRegister = (userData) => axios.post(`${API_URL}/api/register`,userData);
+export const getLogin = (userData) => axios.post(`${API_URL}/api/login`,userData);
