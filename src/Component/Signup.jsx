@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import * as api from '../API/api'
 import { faL } from "@fortawesome/free-solid-svg-icons";
-const Signup = ({onClose}) => {
+const Signup = ({onClose, setIsLoggedIn}) => {
     const [isRegister, setIsRegister] = useState(false);
     const [userEmail, setUserEmail] = useState("");
     const [userPassword, setUserPassword] = useState("");
@@ -35,6 +35,8 @@ const Signup = ({onClose}) => {
         const response = await api.getLogin(loginUser);
         console.log("Register User:", response.data.token);
         alert("Login Successfully");
+        setIsLoggedIn(true);
+        
         onClose();
       } catch (error) {
         console.log("Unable to login");
