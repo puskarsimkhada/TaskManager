@@ -1,11 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Signup from "./Signup";
+import axios from "axios";
 const Navbar = () => {
   const [isSigninOpen, setIsSigninOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
+
+  useEffect(() => {
+    const checkStatus = async () => {
+      const token = localStorage.getItem("token");
+      if(token){
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        try { 
+          const response = await axios.get("http://127.0.0.1:8000/api/profile");
+          if(response.data){
+            setIsLoggedIn(true);
+          }
+        } catch (error) {
+          console.log("Error checking status");
+        localStorage.removeItem("token");
+        }
+      }
+    };
+    checkStatus();
+  }, []);
+
 const handleLogout = () => {
+  localStorage.removeItem("token");
   setIsLoggedIn(false);
   setShowProfileMenu(false);
 }

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import * as api from '../API/api'
 import { faL } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 const Signup = ({onClose, setIsLoggedIn}) => {
     const [isRegister, setIsRegister] = useState(false);
     const [userEmail, setUserEmail] = useState("");
@@ -33,14 +34,33 @@ const Signup = ({onClose, setIsLoggedIn}) => {
       }
       try {
         const response = await api.getLogin(loginUser);
-        console.log("Register User:", response.data.token);
-        alert("Login Successfully");
+        const token = response.data.token;
+        localStorage.setItem("token",token);
+
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        await handleStatus(1);
         setIsLoggedIn(true);
-        
+        alert("Login Successfully");
         onClose();
       } catch (error) {
         console.log("Unable to login");
         setError("Unable to login");
+      }
+    }
+
+
+    const handleStatus = async (status) => {
+      try {
+        const token = localStorage.getItem("token");
+        console.log("Token after login:", token);
+        if(token){
+          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          await api.updateStatus(status);
+          console.log("Status updated to:", status);
+        }
+      } catch (error) {
+        console.log("Unable to change status");
+        setError("Unable to change status");
       }
     }
 
@@ -53,7 +73,7 @@ const Signup = ({onClose, setIsLoggedIn}) => {
             {isRegister ? "Sign Up" : "Sign In"}
           </h2>
           <button
-            className="mt-4 text-sky-600 block w-full text-right absolute top-0 right-5 text-3xl"
+            className="mt-4 text-sky-600 block text-right absolute top-0 right-5 text-3xl"
             onClick={onClose}
           >
             &times;

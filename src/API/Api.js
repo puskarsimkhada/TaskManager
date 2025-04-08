@@ -12,3 +12,6 @@ export const deleteTask = (id) => axios.delete(`${API_URL}/api/tasks/${id}`);
 
 export const getRegister = (userData) => axios.post(`${API_URL}/api/register`,userData);
 export const getLogin = (userData) => axios.post(`${API_URL}/api/login`,userData);
+
+//get Status
+export const updateStatus = (status) => axios.put(`${API_URL}/api/update-status`,{status});
